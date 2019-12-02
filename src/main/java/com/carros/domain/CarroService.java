@@ -3,6 +3,8 @@ package com.carros.domain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CarroService {
 
@@ -11,5 +13,9 @@ public class CarroService {
 
     public Iterable<Carro> getCarros(){
         return carroRepository.findAll();
+    }
+
+    public Optional<Carro> getCarroById(Long id) {
+        return carroRepository.findById(id);
     }
 }
