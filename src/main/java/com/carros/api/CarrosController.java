@@ -3,7 +3,6 @@ package com.carros.api;
 import com.carros.domain.Carro;
 import com.carros.domain.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,38 +25,45 @@ public class CarrosController {
     private CarroService service;
 
     @GetMapping
-    public ResponseEntity<Iterable<Carro>> get(){
+    public ResponseEntity<Iterable<Carro>> getAllCarros(){
         return ResponseEntity.ok(service.getCarros());
         //return new ResponseEntity<>(service.getCarros(), HttpStatus.OK) ;
     }
 
     @GetMapping("/{id}")
-    public Optional<Carro> getCarroById(@PathVariable("id") Long id){
-        return service.getCarroById(id);
+    public ResponseEntity getCarroById(@PathVariable("id") Long id){
+        Optional<Carro> carro =  service.getCarroById(id);
+        return carro.isPresent() ? ResponseEntity.ok(carro): ResponseEntity.noContent().build();
     }
 
     @GetMapping("/tipo/{tipo}")
-    public Iterable<Carro> getCarrosByTipo(@PathVariable("tipo") String tipo){
-        return service.getCarrosByTipo(tipo);
+    public ResponseEntity getCarrosByTipo(@PathVariable("tipo") String tipo){
+        List<Carro> carros = service.getCarrosByTipo(tipo);
+        return carros.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(carros);
     }
 
     @PostMapping
-    public String post(@RequestBody Carro carro){
-        Carro carroSalvo = service.save(carro);
+    public ResponseEntity post(@RequestBody Carro carro){
+        Optional<Carro> carroSalvo = service.save(carro);
+        return carroSalvo.isPresent() ?
+                ResponseEntity.created(URI.create("/api/v1/carros/" + carroSalvo.get().getId())).build() :
+                ResponseEntity.badRequest().build();
 
-        return "Carro salvo com sucesso! " + carroSalvo.getId();
     }
 
     @PutMapping("/{id}")
-    public String put(@PathVariable("id") Long id, @RequestBody Carro carro){
+    public ResponseEntity put(@PathVariable("id") Long id, @RequestBody Carro carro){
         Carro carroAtualizado = service.update(id, carro);
-        return "Carro Atualizado com sucesso! " + carroAtualizado.getId();
+        return carroAtualizado == null ?
+                ResponseEntity.badRequest().build() :
+                ResponseEntity.ok(carroAtualizado);
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") Long id){
+    public ResponseEntity delete(@PathVariable("id") Long id){
         service.delete(id);
-        return "Carro deletado com sucesso!";
+        return ResponseEntity.ok().build();
+
     }
 
 
