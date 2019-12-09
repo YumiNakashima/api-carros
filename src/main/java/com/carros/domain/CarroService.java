@@ -1,11 +1,13 @@
 package com.carros.domain;
 
+import com.carros.domain.dto.CarroDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CarroService {
@@ -13,23 +15,23 @@ public class CarroService {
     @Autowired
     private CarroRepository carroRepository;
 
-    public Iterable<Carro> getCarros(){
-        return carroRepository.findAll();
+    public List<CarroDTO> getCarros(){
+        return carroRepository.findAll().stream().map(CarroDTO::new).collect(Collectors.toList());
     }
 
-    public Optional<Carro> getCarroById(Long id) {
-        return carroRepository.findById(id);
+    public Optional<CarroDTO> getCarroById(Long id) {
+        return carroRepository.findById(id).map(CarroDTO::new);
     }
 
-    public List<Carro> getCarrosByTipo(String tipo) {
-        return carroRepository.findByTipo(tipo);
+    public List<CarroDTO> getCarrosByTipo(String tipo) {
+        return carroRepository.findByTipo(tipo).stream().map(CarroDTO::new).collect(Collectors.toList());
     }
 
-    public Optional<Carro> save(Carro carro) {
-        return Optional.of(carroRepository.save(carro));
+    public Optional<CarroDTO> save(Carro carro) {
+        return Optional.of(carroRepository.save(carro)).map(CarroDTO::new);
     }
 
-    public Carro update(Long id, Carro carro) {
+    public CarroDTO update(Long id, Carro carro) {
         Assert.notNull(id,"Não foi possível atualizar o registro");
 
         // Busca o carro no banco de dados
@@ -44,7 +46,7 @@ public class CarroService {
             // Atualiza o carro
             carroRepository.save(db);
 
-            return db;
+            return new CarroDTO(db);
         } else {
             return null;
             //throw new RuntimeException("Não foi possível atualizar o registro");
@@ -52,8 +54,7 @@ public class CarroService {
     }
 
     public void delete(Long id) {
-        Optional<Carro> carro = getCarroById(id);
-        if (carro.isPresent()){
+        if (getCarroById(id).isPresent()){
             carroRepository.deleteById(id);
         }
     }
