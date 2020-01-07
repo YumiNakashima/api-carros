@@ -16,19 +16,19 @@ public class CarroService {
     private CarroRepository carroRepository;
 
     public List<CarroDTO> getCarros(){
-        return carroRepository.findAll().stream().map(CarroDTO::new).collect(Collectors.toList());
+        return carroRepository.findAll().stream().map(CarroDTO::create).collect(Collectors.toList());
     }
 
     public Optional<CarroDTO> getCarroById(Long id) {
-        return carroRepository.findById(id).map(CarroDTO::new);
+        return carroRepository.findById(id).map(CarroDTO::create);
     }
 
     public List<CarroDTO> getCarrosByTipo(String tipo) {
-        return carroRepository.findByTipo(tipo).stream().map(CarroDTO::new).collect(Collectors.toList());
+        return carroRepository.findByTipo(tipo).stream().map(CarroDTO::create).collect(Collectors.toList());
     }
 
     public Optional<CarroDTO> save(Carro carro) {
-        return Optional.of(carroRepository.save(carro)).map(CarroDTO::new);
+        return Optional.of(carroRepository.save(carro)).map(CarroDTO::create);
     }
 
     public CarroDTO update(Long id, Carro carro) {
@@ -46,7 +46,7 @@ public class CarroService {
             // Atualiza o carro
             carroRepository.save(db);
 
-            return new CarroDTO(db);
+            return CarroDTO.create(db);
         } else {
             return null;
             //throw new RuntimeException("Não foi possível atualizar o registro");
