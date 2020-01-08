@@ -63,7 +63,7 @@ public class CarrosController {
     public ResponseEntity put(@PathVariable("id") Long id, @RequestBody Carro carro){
         CarroDTO carroAtualizado = service.update(id, carro);
         return carroAtualizado == null ?
-                ResponseEntity.badRequest().build() :
+                ResponseEntity.notFound().build() :
                 ResponseEntity.ok(carroAtualizado);
     }
 
