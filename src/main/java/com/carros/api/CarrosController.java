@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -45,11 +46,17 @@ public class CarrosController {
 
     @PostMapping
     public ResponseEntity post(@RequestBody Carro carro){
-        Optional<CarroDTO> carroSalvo = service.save(carro);
-        return carroSalvo.isPresent() ?
-                ResponseEntity.created(URI.create("/api/v1/carros/" + carroSalvo.get().getId())).body(carroSalvo.get()) :
-                ResponseEntity.badRequest().build();
+        try {
+            Optional<CarroDTO> carroSalvo = service.insert(carro);
+            return ResponseEntity.created(getURI(carroSalvo.get().getId())).body(carroSalvo.get());
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
 
+    }
+
+    private URI getURI(Long id){
+        return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
     }
 
     @PutMapping("/{id}")
