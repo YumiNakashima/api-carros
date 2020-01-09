@@ -27,8 +27,8 @@ public class CarrosController {
     private CarroService service;
 
     @GetMapping
-    public ResponseEntity getAllCarros(){
-        return ResponseEntity.ok(service.getCarros());
+    public ResponseEntity<List<CarroDTO>> getAllCarros(){
+        return ResponseEntity.ok().body(service.getCarros());
         //return new ResponseEntity<>(service.getCarros(), HttpStatus.OK) ;
     }
 
