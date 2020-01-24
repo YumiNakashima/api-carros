@@ -30,13 +30,11 @@ public class CarrosController {
     public ResponseEntity<List<CarroDTO>> getAllCarros(){
         List<CarroDTO> list = service.getCarros();
         return ResponseEntity.ok().body(list);
-        //return new ResponseEntity<>(service.getCarros(), HttpStatus.OK) ;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getCarroById(@PathVariable("id") Long id){
-        Optional<CarroDTO> carro =  service.getCarroById(id);
-        return carro.isPresent() ? ResponseEntity.ok(carro): ResponseEntity.noContent().build();
+        return ResponseEntity.ok(service.getCarroById(id));
     }
 
     @GetMapping("/tipo/{tipo}")
@@ -47,13 +45,8 @@ public class CarrosController {
 
     @PostMapping
     public ResponseEntity post(@RequestBody Carro carro){
-        try {
-            Optional<CarroDTO> carroSalvo = service.insert(carro);
-            return ResponseEntity.created(getURI(carroSalvo.get().getId())).body(carroSalvo.get());
-        }catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
-
+        Optional<CarroDTO> carroSalvo = service.insert(carro);
+        return ResponseEntity.created(getURI(carroSalvo.get().getId())).body(carroSalvo.get());
     }
 
     private URI getURI(Long id){

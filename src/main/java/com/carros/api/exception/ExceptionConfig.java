@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionConfig {
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
-    @ResponseBody
     public ResponseEntity errorNotFound(Exception ex){
         return  ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity errorBadRequest(Exception ex){
+        return  ResponseEntity.badRequest().build();
     }
 }
