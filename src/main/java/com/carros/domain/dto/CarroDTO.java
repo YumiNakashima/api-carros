@@ -1,12 +1,16 @@
 package com.carros.domain.dto;
 
 import com.carros.domain.Carro;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CarroDTO {
 
     private Long id;
